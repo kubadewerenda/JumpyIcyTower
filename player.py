@@ -25,6 +25,7 @@ class Player(py.sprite.Sprite):
         self.walk_index=0
         self.lives=5
         self.particles_group=py.sprite.Group()
+        self.combo_cal=0
     
     def update_champ(self, player_s, player_j, player_w, name,jump_s, hit_s):
         self.image_jump=py.transform.scale(player_j, (80,80))
@@ -59,20 +60,22 @@ class Player(py.sprite.Sprite):
                 dx=0
 
         # ---------------------------- Combo od sciany
-        if SCREEN_WIDTH-10<self.rect.right<=SCREEN_WIDTH:
+        if SCREEN_WIDTH-10<self.rect.right<=SCREEN_WIDTH and self.combo_cal<2:
             if key[py.K_SPACE]:
                 if key[py.K_a]:
                     self.jump_s.play()
                     dx=-self.speed
                     self.vel_y=-self.jump_val
                     dy+=self.vel_y
-        if 0<=self.rect.left<10:
+                    self.combo_cal+=1
+        if 0<=self.rect.left<10 and self.combo_cal<2:
             if key[py.K_SPACE]:
                 if key[py.K_d]:
                     self.jump_s.play()
                     dx=self.speed
                     self.vel_y=-self.jump_val
                     dy+=self.vel_y
+                    self.combo_cal+=1
 
         # --------------------------- Sprawdzanie ruchu
         if dx!=0:
@@ -88,6 +91,9 @@ class Player(py.sprite.Sprite):
                         self.rect.bottom=platform.rect.top
                         dy=0
                         self.vel_y=0
+                        # ---------------------------- zerowanie combo od wall
+                        self.combo_cal=0
+
                         if key[py.K_SPACE]:
                             self.jump_s.play()
                             self.vel_y=-self.jump_val
